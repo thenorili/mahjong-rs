@@ -19,31 +19,33 @@ pub mod tiles {
      * The Unicode indexing of tiles will be used throughout.
      */
     struct mahjong_tile = {
-        uint8 index,
-        char* name,
-        char  unicode,
-        char  suit,
+        const uint8 index,
+        const &'static str name,
+        const char  unicode,
+        const char  suit,
     }
-        /* we should just make this stuff static... and delete most of the extra stuff below           */
+        /* we should just make this stuff static... and delete most of the extra stuff below   */
+    /* if red tiles were added, it'd be four/sixteen to the end or a quality to all of them...
+     */
     }
     static mahjong_tiles: [mahjong_tile; 34] = [
-{ 0, 'East Wind',  '\u{1F000}', 'h' },
-{ 1, 'South Wind', '\u{1F001}', 'h' },
-{ 2, 'West Wind', '\u{1F002}', 'h' },
-{ 3, 'North Wind', '\u{1F003}', 'h'},
-{ 4, 'Red Dragon', '\u{1F004}', 'h'},
-{ 5, 'Green Dragon', '\u{1F005}', 'h'},
-{ 6, 'White Dragon', '\u{1F006}', 'h'},
-{ 7, '1m', '\u{1F007}',
+{ 0, "East Wind",  '\u{1F000}', 'z' },
+{ 1, "South Wind", '\u{1F001}', 'z' },
+{ 2, "West Wind", '\u{1F002}', 'z' },
+{ 3, "North Wind", '\u{1F003}', 'z'},
+{ 4, "Red Dragon", '\u{1F004}', 'z'},
+{ 5, "Green Dragon", '\u{1F005}', 'z'},
+{ 6, "White Dragon", '\u{1F006}', 'z'},
+{ 7, "1m", '\u{1F007}', 'm'},
         // Man 1-9 (7-15)
-        '\u{1F008}',
-        '\u{1F009}',
-        '\u{1F00A}',
-        '\u{1F00B}',
-        '\u{1F00C}',
-        '\u{1F00D}',
-        '\u{1F00E}',
-        '\u{1F00F}',
+{ 8, "2m", '\u{1F008}', 'm'},
+{ 9, "3m", '\u{1F009}', 'm'},
+{ 10, "4m", '\u{1F00A}', 'm'},
+{ 11, "5m", '\u{1F00B}', 'm'},
+{ 12, "6m", '\u{1F00C}', 'm'},
+{ 13, "7m", '\u{1F00D}', 'm'},
+{ 14, "8m", '\u{1F00E}', 'm'},
+{ 15, "9m", '\u{1F00F}',
         // Sou 1-9 (16-24)
         '\u{1F010}',
         '\u{1F011}',
