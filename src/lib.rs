@@ -5,6 +5,68 @@
 
 pub mod tiles {
     /*
+     * Mahjong is a tile game. This module seeks to provide
+     * data structures, constants, and functions
+     * for dealing with a set of riichi mahjong tiles with
+     * Rust code, unicode, and text at least.
+     *
+     * Randomization is essential and should certainly be
+     * handled by a dependency.
+     *
+     * Unicode doesn't support red tiles currently -- let's do this
+     * without red tiles for now.
+     *
+     * The Unicode indexing of tiles will be used throughout.
+     */
+    struct mahjong_tile = {
+        uint8 index,
+        char* name,
+        char  unicode,
+        char  suit,
+    }
+        /* we should just make this stuff static... and delete most of the extra stuff below           */
+    }
+    static mahjong_tiles: [mahjong_tile; 34] = [
+{ 0, 'East Wind',  '\u{1F000}', 'h' },
+{ 1, 'South Wind', '\u{1F001}', 'h' },
+{ 2, 'West Wind', '\u{1F002}', 'h' },
+{ 3, 'North Wind', '\u{1F003}', 'h'},
+{ 4, 'Red Dragon', '\u{1F004}', 'h'},
+{ 5, 'Green Dragon', '\u{1F005}', 'h'},
+{ 6, 'White Dragon', '\u{1F006}', 'h'},
+{ 7, '1m', '\u{1F007}',
+        // Man 1-9 (7-15)
+        '\u{1F008}',
+        '\u{1F009}',
+        '\u{1F00A}',
+        '\u{1F00B}',
+        '\u{1F00C}',
+        '\u{1F00D}',
+        '\u{1F00E}',
+        '\u{1F00F}',
+        // Sou 1-9 (16-24)
+        '\u{1F010}',
+        '\u{1F011}',
+        '\u{1F012}',
+        '\u{1F013}',
+        '\u{1F014}',
+        '\u{1F015}',
+        '\u{1F016}',
+        '\u{1F017}',
+        '\u{1F018}',
+        // Pin 1-9 (25-33)
+        '\u{1F019}',
+        '\u{1F01A}',
+        '\u{1F01B}',
+        '\u{1F01C}',
+        '\u{1F01D}',
+        '\u{1F01E}',
+        '\u{1F01F}',
+        '\u{1F020}',
+        '\u{1F021}',
+    ];
+
+    /*
     enum Winds {
         EastWind,
         SouthWind,
@@ -80,56 +142,6 @@ pub mod tiles {
             }
         }
     }
-
-    // so if it's a part of the way the tiles are expressed
-    // Unicode doesn't support red tiles currently,
-    // the 'redness' of the tiles needs to be tagged separately
-    static MAHJONG_TILES_UNICODE: [char; 34] = [
-        // East Wind
-        '\u{1F000}',
-        // South Wind
-        '\u{1F001}',
-        // West Wind
-        '\u{1F002}',
-        // North Wind
-        '\u{1F003}',
-        // Red Dragon
-        '\u{1F004}',
-        // Green Dragon
-        '\u{1F005}',
-        // White Dragon
-        '\u{1F006}',
-        // Man 1-9
-        '\u{1F007}',
-        '\u{1F008}',
-        '\u{1F009}',
-        '\u{1F00A}',
-        '\u{1F00B}',
-        '\u{1F00C}',
-        '\u{1F00D}',
-        '\u{1F00E}',
-        '\u{1F00F}',
-        // Sou 1-9
-        '\u{1F010}',
-        '\u{1F011}',
-        '\u{1F012}',
-        '\u{1F013}',
-        '\u{1F014}',
-        '\u{1F015}',
-        '\u{1F016}',
-        '\u{1F017}',
-        '\u{1F018}',
-        // Pin 1-9
-        '\u{1F019}',
-        '\u{1F01A}',
-        '\u{1F01B}',
-        '\u{1F01C}',
-        '\u{1F01D}',
-        '\u{1F01E}',
-        '\u{1F01F}',
-        '\u{1F020}',
-        '\u{1F021}',
-    ];
     enum TileCode {
         M0 = 0x105,
         M1 = 0x01,
