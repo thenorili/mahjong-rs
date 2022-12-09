@@ -45,52 +45,29 @@ pub mod tiles {
 { 12, "6m", '\u{1F00C}', 'm'},
 { 13, "7m", '\u{1F00D}', 'm'},
 { 14, "8m", '\u{1F00E}', 'm'},
-{ 15, "9m", '\u{1F00F}',
+{ 15, "9m", '\u{1F00F}', 'm'},
         // Sou 1-9 (16-24)
-        '\u{1F010}',
-        '\u{1F011}',
-        '\u{1F012}',
-        '\u{1F013}',
-        '\u{1F014}',
-        '\u{1F015}',
-        '\u{1F016}',
-        '\u{1F017}',
-        '\u{1F018}',
+{ 16, "1s", '\u{1F010}', 's'},
+{ 17, "2s", '\u{1F011}', 's'},
+{ 18, "3s", '\u{1F012}', 's'},
+{ 19, "4s", '\u{1F013}', 's'},
+{ 20, "5s", '\u{1F014}', 's'},
+{ 21, "6s", '\u{1F015}', 's'},
+{ 22, "7s", '\u{1F016}', 's'},
+{ 23, "8s", '\u{1F017}', 's'},
+{ 24, "9s", '\u{1F018}', 's'},
         // Pin 1-9 (25-33)
-        '\u{1F019}',
-        '\u{1F01A}',
-        '\u{1F01B}',
-        '\u{1F01C}',
-        '\u{1F01D}',
-        '\u{1F01E}',
-        '\u{1F01F}',
-        '\u{1F020}',
-        '\u{1F021}',
+{ 25, "1p", '\u{1F019}', 'p'},
+{ 26, "2p", '\u{1F01A}', 'p'},
+{ 27, "3p", '\u{1F01B}', 'p'},
+{ 28, "4p", '\u{1F01C}', 'p'},
+{ 29, "5p", '\u{1F01D}', 'p'},
+{ 30, "6p", '\u{1F01E}', 'p'},
+{ 31, "7p", '\u{1F01F}', 'p'},
+{ 32, "8p", '\u{1F020}', 'p'},
+{ 33, "9p", '\u{1F021}', 'p'},
     ];
 
-    /*
-    enum Winds {
-        EastWind,
-        SouthWind,
-        WestWind,
-        NorthWind,
-    }
-    enum Dragons {
-        WhiteDragon,
-        GreenDragon,
-        RedDragon,
-    }
-    enum Honor {
-        Dragon,
-        Wind,
-    }
-    struct SuitTile {
-        suit: Suit,
-        // red 5s are 0m, 0s, 0p
-        num: usize,
-    }
-    */
-    // maybe just use b'm', s, p, z instead of int!
     #[repr(u8)]
     #[derive(Copy, Clone, Debug, PartialEq)]
     enum Suit {
@@ -110,6 +87,8 @@ pub mod tiles {
             }
         }
     }
+
+
 
     #[allow(clippy::from_over_into)]
     impl Into<char> for Suit {
@@ -144,6 +123,11 @@ pub mod tiles {
             }
         }
     }
+    // i don't like that it mismatches the index...
+    // this might just be better removed; if not, then justify its existence
+    // and add it to the static array at the top.
+    //
+    // quarantine --
     enum TileCode {
         M0 = 0x105,
         M1 = 0x01,
@@ -395,6 +379,10 @@ pub mod tiles {
             assert!(tile_is_valid(tile));
         }
     }
+
+    // QUARANTINE END --
+
+
     // TODO: use hashmap to test that the correct number of each tiles were created
     //          maybe just test against static data
     //          still pretty peeved that I put a lot of time into a nothing burger =-=
