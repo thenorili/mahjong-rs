@@ -18,60 +18,173 @@ pub mod tiles {
      *
      * The Unicode indexing of tiles will be used throughout.
      */
-    struct mahjong_tile = {
-        const uint8 code,
-        const &'static str name,
-        const char  unicode,
-        const char  suit,
-        const char  face,
+
+    #[repr(u8)]
+    #[derive(Copy, Clone, Debug, PartialEq)]
+    enum Suit {
+        Man    = b'm',
+        Pin    = b'p',
+        Sou    = b's',
+        Honor  = b'z',
     }
-    static mahjong_tiles: [mahjong_tile; 34] = [
-             // Man 1-9
-        { 0x01, "1m", '\u{1F007}', 'm', '1'},
-        { 0x02, "2m", '\u{1F008}', 'm', '2'},
-        { 0x03, "3m", '\u{1F009}', 'm', '3'},
-        { 0x04, "4m", '\u{1F00A}', 'm', '4'},
-        { 0x05, "5m", '\u{1F00B}', 'm', '5'},
-        { 0x06, "6m", '\u{1F00C}', 'm', '6'},
-        { 0x07, "7m", '\u{1F00D}', 'm', '7'},
-        { 0x08, "8m", '\u{1F00E}', 'm', '8'},
-        { 0x09, "9m", '\u{1F00F}', 'm', '9'},
-            // Pin 1-9
-        { 0x11, "1p", '\u{1F019}', 'p', '1'},
-        { 0x12, "2p", '\u{1F01A}', 'p', '2'},
-        { 0x13, "3p", '\u{1F01B}', 'p', '3'},
-        { 0x14, "4p", '\u{1F01C}', 'p', '4'},
-        { 0x15, "5p", '\u{1F01D}', 'p', '5'},
-        { 0x16, "6p", '\u{1F01E}', 'p', '6'},
-        { 0x17, "7p", '\u{1F01F}', 'p', '7'},
-        { 0x18, "8p", '\u{1F020}', 'p', '8'},
-        { 0x19, "9p", '\u{1F021}', 'p', '9'},
-            // Sou 1-9
-        { 0x21, "1s", '\u{1F010}', 's', '1'},
-        { 0x22, "2s", '\u{1F011}', 's', '2'},
-        { 0x23, "3s", '\u{1F012}', 's', '3'},
-        { 0x24, "4s", '\u{1F013}', 's', '4'},
-        { 0x25, "5s", '\u{1F014}', 's', '5'},
-        { 0x26, "6s", '\u{1F015}', 's', '6'},
-        { 0x27, "7s", '\u{1F016}', 's', '7'},
-        { 0x28, "8s", '\u{1F017}', 's', '8'},
-        { 0x29, "9s", '\u{1F018}', 's', '9'},
-            // Honors
-        { 0x31, "East Wind",  '\u{1F000}', 'z' , '1'},
-        { 0x41, "South Wind", '\u{1F001}', 'z', '2' },
-        { 0x51, "West Wind", '\u{1F002}', 'z', '3'},
-        { 0x61, "North Wind", '\u{1F003}', 'z', '4'},
-        { 0x71, "Red Dragon", '\u{1F004}', 'z', '5'},
-        { 0x81, "Green Dragon", '\u{1F005}', 'z', '6'},
-        { 0x91, "White Dragon", '\u{1F006}', 'z', '7'},
 
-    ];
+    impl From<char> for Suit {
+        fn from(c: char) -> Suit {
+            match c {
+                'm' => Suit::Man,
+                'p' => Suit::Pin,
+                's' => Suit::Sou,
+                'z' => Suit::Honor,
+                _ => panic!(),
+            }
+        }
+    }
+
+    #[allow(clippy::from_over_into)]
+    impl Into<char> for Suit {
+        fn into(self) -> char {
+            self as u8 as char
+        }
+    }
+
+    impl Suit {
+        fn try_from(c: char) -> Result<Self, ()> {
+            match c {
+                'm' => Ok(Suit::Man),
+                'p' => Ok(Suit::Pin),
+                's' => Ok(Suit::Sou),
+                'z' => Ok(Suit::Honor),
+                _ => Err(()),
+            }
+        }
+    }
 
 
+    impl std::str::FromStr for Suit {
+        type Err = ();
 
-    type mahjong_tileset = [uint8; 136]
+        fn from_str(s: &str) -> Result<Suit, ()> {
+            match s {
+                "m" => Ok(Suit::Man),
+                "s" => Ok(Suit::Sou),
+                "p" => Ok(Suit::Pin),
+                "z" => Ok(Suit::Honor),
+                _ => Err(()),
+            }
+        }
+    }
+
+    #[derive(Clone)]
+    struct TileId {
+        suit: Suit;
+        face: u8;
+    }
+
+    #[derive(Clone)]
+    struct Tile_Info {
+        // name might unnecessary...
+        // is only kinda useful for honors, and then can be handled other ways
+        name: &'static str;
+        unicode: char;
+        suit: char;
+        face: u8;
+    }
+
+    // lnori 2022-12-12
+    // this could be put in an impl block with related constants and functions
+    static MJ_TILES: phf::Map<u8, Tile_Info> = {
+        // Man 1-9
+        0x01  => { "1m", '\u{1F007}', 'm', 1},
+        0x02  => { "2m", '\u{1F008}', 'm', 2},
+        0x03  => { "3m", '\u{1F009}', 'm', 3},
+        0x04  => { "4m", '\u{1F00A}', 'm', 4},
+        0x05  => { "5m", '\u{1F00B}', 'm', 5},
+        // fixme -- indicate these are red somehow
+        0x105 => { "5m", '\u{1F00B}', 'm', 5},
+        0x06  => { "6m", '\u{1F00C}', 'm', 6},
+        0x07  => { "7m", '\u{1F00D}', 'm', 7},
+        0x08  => { "8m", '\u{1F00E}', 'm', 8},
+        0x09  => { "9m", '\u{1F00F}', 'm', 9},
+        // Pin 1-9
+        0x11  => { "1p", '\u{1F019}', 'p', 1},
+        0x12  => { "2p", '\u{1F01A}', 'p', 2},
+        0x13  => { "3p", '\u{1F01B}', 'p', 3},
+        0x14  => { "4p", '\u{1F01C}', 'p', 4},
+        0x15  => { "5p", '\u{1F01D}', 'p', 5},
+        // fixme -- indicate these are red somehow
+        0x115 => { "5p", '\u{1F01D}', 'p', 5},
+        0x16  => { "6p", '\u{1F01E}', 'p', 6},
+        0x17  => { "7p", '\u{1F01F}', 'p', 7},
+        0x18  => { "8p", '\u{1F020}', 'p', 8},
+        0x19  => { "9p", '\u{1F021}', 'p', 9},
+        // Sou 1-9
+        0x21  => { "1s", '\u{1F010}', 's', 1},
+        0x22  => { "2s", '\u{1F011}', 's', 2},
+        0x23  => { "3s", '\u{1F012}', 's', 3},
+        0x24  => { "4s", '\u{1F013}', 's', 4},
+        0x25  => { "5s", '\u{1F014}', 's', 5},
+        // fixme -- indicate these are red somehow
+        0x125 => { "5s", '\u{1F014}', 's', 5},
+        0x26  => { "6s", '\u{1F015}', 's', 6},
+        0x27  => { "7s", '\u{1F016}', 's', 7},
+        0x28  => { "8s", '\u{1F017}', 's', 8},
+        0x29  => { "9s", '\u{1F018}', 's', 9},
+        // Honors
+        0x31 => { "East Wind",  '\u{1F000}', 'z' , 1},
+        0x41 => { "South Wind", '\u{1F001}', 'z', 2 },
+        0x51 => { "West Wind", '\u{1F002}', 'z', 3},
+        0x61 => { "North Wind", '\u{1F003}', 'z', 4},
+        0x71 => { "Red Dragon", '\u{1F004}', 'z', 5},
+        0x81 => { "Green Dragon", '\u{1F005}', 'z', 6},
+        0x91 => { "White Dragon", '\u{1F006}', 'z', 7},
+    };
+
+    const fn TileCode_To_TileId (code: u8) -> TileId
+    {
+        // FIXME: can't use get(code) in constant expression? investigate
+        const suit: Suit = Suit(MJ_TILES.get(code).suit);
+        const face: u8 = MJ_TILES.get(code).face;
+        return TileId(suit, face);
+    }
+
+    const fn DoraIndicatorFlow (id: TileId) -> TileId
+    {
+        const id: TileId = TileCode_To_Tileid(id);
+        if id.suit == Suit::Honor {
+            let const u8 face = match id.face {
+                // E->S->W->N->E
+                1 => 2,
+                2 => 3,
+                3 => 4,
+                4 => 1,
+                // 6G->5R->7W->6G
+                5 => 7,
+                6 => 5,
+                7 => 6,
+                _ => panic!("Invalid tile"),
+            };
+            return const TileId(id.suit, face);
+        } else {
+            let const u8 face = match id.face {
+                1 => 2,
+                2 => 3,
+                3 => 4,
+                4 => 5,
+                5 => 6,
+                6 => 7,
+                7 => 8,
+                8 => 9,
+                9 => 1,
+                _ => panic!(),
+            };
+            return const TileId(id.suit, face);
+        }
+    }
+
+
+    type Mahjong_Tileset = [u8; 136]
     /*
-    static MAHJONG_TILESET_UNSORTED: mahjong_tileset = [
+    static MAHJONG_TILESET_UNSORTED_REDFIVE: Mahjong_Tileset = [
         // 0x01-0x09 1-9m
         0x01, 0x01, 0x01, 0x01,
         0x02, 0x02, 0x02, 0x02,
@@ -116,7 +229,7 @@ pub mod tiles {
     ];
     */
 
-    static MAHJONG_TILESET_UNSORTED_NORED: mahjong_tileset = [
+    static MAHJONG_TILESET_UNSORTED_NORED: Mahjong_Tileset = [
         // 0x01-0x09 1-9m
         0x01, 0x01, 0x01, 0x01,
         0x02, 0x02, 0x02, 0x02,
@@ -160,62 +273,6 @@ pub mod tiles {
         0x91, 0x91, 0x91, 0x91,
     ];
 
-
-    #[repr(u8)]
-    #[derive(Copy, Clone, Debug, PartialEq)]
-    enum Suit {
-        Man    = b'm',
-        Pin    = b'p',
-        Sou    = b's',
-        Honor  = b'z',
-    }
-    impl From<char> for Suit {
-        fn from(c: char) -> Suit {
-            match c {
-                'm' => Suit::Man,
-                'p' => Suit::Pin,
-                's' => Suit::Sou,
-                'z' => Suit::Honor,
-                _ => panic!(),
-            }
-        }
-    }
-
-
-
-    #[allow(clippy::from_over_into)]
-    impl Into<char> for Suit {
-        fn into(self) -> char {
-            self as u8 as char
-        }
-    }
-
-    impl Suit {
-        fn try_from(c: char) -> Result<Self, ()> {
-            match c {
-                'm' => Ok(Suit::Man),
-                'p' => Ok(Suit::Pin),
-                's' => Ok(Suit::Sou),
-                'z' => Ok(Suit::Honor),
-                _ => Err(()),
-            }
-        }
-    }
-
-
-    impl std::str::FromStr for Suit {
-        type Err = ();
-
-        fn from_str(s: &str) -> Result<Suit, ()> {
-            match s {
-                "m" => Ok(Suit::Man),
-                "s" => Ok(Suit::Sou),
-                "p" => Ok(Suit::Pin),
-                "z" => Ok(Suit::Honor),
-                _ => Err(()),
-            }
-        }
-    }
     // i don't like that it mismatches the index...
     // this might just be better removed; if not, then justify its existence
     // and add it to the static array at the top.
