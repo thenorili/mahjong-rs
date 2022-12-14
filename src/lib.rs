@@ -19,6 +19,7 @@ pub mod mj {
      * The Unicode indexing of tiles will be used throughout.
      */
 
+    // FIXME lnori: this enum isn't working at all for some reason
     #[repr(u8)]
     #[derive(Copy, Clone, Debug, const PartialEq)]
     enum Suit {
@@ -141,16 +142,16 @@ pub mod mj {
     const fn TileCode_To_TileId (code: u8) -> TileId
     {
         // FIXME: can't use get(code) in constant expression? investigate
-        const tile: TileInfo = MJ_TILES[code];
-        const suit: Suit = Suit(tile.suit);
-        const face: u8 = tile.face;
+        let tile: TileInfo = MJ_TILES[code];
+        let suit: Suit = Suit(tile.suit);
+        let face: u8 = tile.face;
         return TileId(suit, face);
     }
 
     const fn DoraIndicatorFlow (id: TileId) -> TileId
     {
         if id.suit == Suit::Honor {
-            const face: u8 = match id.face {
+            let face: u8 = match id.face {
                 // E->S->W->N->E
                 1 => 2,
                 2 => 3,
@@ -164,15 +165,8 @@ pub mod mj {
             };
             return TileId(id.suit, face);
         } else {
-            const face: u8 = match id.face {
-                1 => 2,
-                2 => 3,
-                3 => 4,
-                4 => 5,
-                5 => 6,
-                6 => 7,
-                7 => 8,
-                8 => 9,
+            let face: u8 = match id.face {
+                id.face < 9 => id.face + 1,
                 9 => 1,
                 _ => panic!(),
             };
@@ -488,24 +482,4 @@ pub mod mj {
     }
 
     // QUARANTINE END --
-
-
-    // TODO: use hashmap to test that the correct number of each tiles were created
-    //          maybe just test against static data
-    //          still pretty peeved that I put a lot of time into a nothing burger =-=
-    // Q: should I just process the red fives as fives at some level? which level?
-    //      just separate parameter 'face_value'? or special logic?
-    // TODO: sorting (will make testing tileset correctness trivial)
-    // TODO: shuffling
-    // TODO: create walls
-    // TODO: deal to hands from walls
-    // TODO: discard from hands to discard pile
-    //
-    // TODO: parse hands into tile groups for chii/pon/kan
-    // TODO: organize this ad-hoc planning into a real project plan C:
-    // TODO: detect yaku
-    // TODO: detect tenpai
-    // TODO: calculate tiles-away-from-tenpai
-    // TODO: test that compares const fn to TILESET
-    //          smh at redundancy
 }
